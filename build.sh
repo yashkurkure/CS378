@@ -77,7 +77,7 @@ do
 		PROJECT_ROOT_PATH=("$(find $PROJECT_DIR -name pubspec.yaml | sed -e "s/pubspec.yaml//g")")
 		
 		# Change the name of the application to student's netid in the Android Manifest file
-		netid="$(cut -d 'P' -f 1 <<< "$LINE")"
+		netid="$(cut -d 'P' -f 1 <<< "$project")"
         echo "NetId: ${netid}"
 		ANDROID_MANIFEST_FILE="${PROJECT_ROOT_PATH}android/app/src/main/AndroidManifest.xml"
 		temp="$(sed '/android:label/{s/android:label=\".*\"/android:label=\"'"$netid"'\"/}' $ANDROID_MANIFEST_FILE)"
@@ -89,17 +89,17 @@ do
 		cd $PROJECT_ROOT_PATH
 		echo "Flutter in: ${PROJECT_ROOT_PATH}"
 		echo "clean..."
-		flutter clean /dev/null 2>&1 #Discard stdout and stderr
+		flutter clean >> /dev/null 2>&1 #Discard stdout and stderr
 		echo "pub get..."
-		flutter pub get /dev/null 2>&1 #Discard stdout and stderr
+		flutter pub get >> /dev/null 2>&1 #Discard stdout and stderr
 		echo "build apk..."
-		flutter build apk --debug --no-sound-null-safety /dev/null 2>&1 #Discard stdout and stderr
+		flutter build apk --debug --no-sound-null-safety >> /dev/null 2>&1 #Discard stdout and stderr
 		
 		cd $SCRIPT_DIR
 		
 		# Move the built apk outside the root
 		APK="${SCRIPT_DIR}/${PROJECT_ROOT_PATH}build/app/outputs/apk/debug/app-debug.apk"
-		TARGET_APK="${SCRIPT_DIR}/${EXTRACT_DIR}/${LINE}/${LINE}.apk"
+		TARGET_APK="${SCRIPT_DIR}/${EXTRACT_DIR}/${project}/${project}.apk"
 		mv $APK $TARGET_APK
 		
 		if test -f "$TARGET_APK"
